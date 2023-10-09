@@ -1,3 +1,14 @@
+
+<?php
+include "config.php";
+
+session_start();
+
+if(!isset($_SESSION['username'])){
+    header("location:{$hostname}/admin/post.php");
+}
+?>
+
 <!doctype html>
 <html>
    <head>
@@ -9,6 +20,30 @@
         <link rel="stylesheet" href="font/font-awesome-4.7.0/css/font-awesome.css">
         <link rel="stylesheet" href="../css/style.css">
     </head>
+<?php
+include "config.php";
+
+if(isset($_POST['login'])){
+    $username = $_POST['username'];
+    $password = md5($_POST['password']);
+
+    $sql = "SELECT * FROM user WHERE username = '{$username}' AND password = '{$password}'";
+    $result = mysqli_query($conn,$sql);
+
+    if(mysqli_num_rows($result) > 0){
+        $row = mysqli_fetch_assoc($result);
+
+        session_start();
+        $_SESSION['username'] = $row['username'];
+        $_SESSION['user_id'] = $row['user_id'];
+        $_SESSION['user_role'] = $row['role'];
+
+        header("location:{$hostname}/admin/post.php");
+    }else{
+        echo "not match";
+    }
+}
+?>
 
     <body>
         <div id="wrapper-admin" class="body-content">

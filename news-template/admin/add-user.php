@@ -1,4 +1,39 @@
-<?php include "header.php"; ?>
+<?php
+include "config.php";
+
+session_start();
+
+if(!isset($_SESSION['username'])){
+    header("location:{$hostname}/admin/post.php");
+}
+?>
+
+<?php
+ include "header.php";
+ include "config.php";
+
+ if(isset($_POST['save'])){
+    $fname = $_POST['fname'];
+    $lname = $_POST['lname'];
+    $user = $_POST['user'];
+    $password = md5($_POST['password']);
+    $role = $_POST['role'];
+
+    $sql = "SELECT username FROM user WHERE username ='{$user}'";
+    $result = mysqli_query($conn, $sql) or die("login failed: ");
+
+    if(mysqli_num_rows($result) > 0){
+        echo "username alreday";
+    }else{
+        $sql1 = "INSERT INTO user (first_name,last_name,username,password,role) VALUES 
+        ('{$fname}','{$lname}','{$user}','{$password}','{$role}')";
+
+        if(mysqli_query($conn, $sql1)){
+            header("location:{$hostname}/admin/users.php");
+        }
+    }
+ }
+  ?>
   <div id="admin-content">
       <div class="container">
           <div class="row">
@@ -7,7 +42,7 @@
               </div>
               <div class="col-md-offset-3 col-md-6">
                   <!-- Form Start -->
-                  <form  action="" method ="POST" autocomplete="off">
+                  <form  action="<?php echo $_SERVER['PHP_SELF'];?>" method ="POST" autocomplete="on">
                       <div class="form-group">
                           <label>First Name</label>
                           <input type="text" name="fname" class="form-control" placeholder="First Name" required>
